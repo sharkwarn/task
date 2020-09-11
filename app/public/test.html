@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btn">login</button>
+    <button id="btn2">发送验证码</button>
+    <button id="btn3">验证登录</button>
+    <br />
+    <button id="btn5">创建标签</button>
+    <button id="btn6">获取标签列表</button>
+    <button id="btn7">删除标签</button>
+    <button id="btn8">编辑标签</button>
+    <br />
+    <button id="btn4">创建任务</button>
+    <button id="btn9">删除任务</button>
+    <button id="btn10">编辑任务</button>
+    <button id="btn11">获取任务列表</button>
+    <button id="btn12">获取任务详情</button>
+    <button id="btn15">查找任务</button>
+    <br />
+
+
+    <button id="btn13">最后一天打卡</button>
+    <script>
+        document.querySelector('#btn13').addEventListener('click', function() {
+            window.fetch('/log/create', {
+                method: 'POST',
+                headers: {
+            　　    'Content-Type': 'application/json',
+                    'token': window.token
+            　　},
+                body: JSON.stringify({
+                    taskId: 9,// 标签名称
+                    remark: ' 签到了  ',
+                    type: 'sign'
+                })
+            })
+            .then(response => response.json())
+            .then(json => console.log(json));
+        }, false);
+    </script>
+
+    <button id="btn16">最后一天休假</button>
+    <script>
+        document.querySelector('#btn16').addEventListener('click', function() {
+            window.fetch('/log/create', {
+                method: 'POST',
+                headers: {
+            　　    'Content-Type': 'application/json',
+                    'token': window.token
+            　　},
+                body: JSON.stringify({
+                    taskId: 9,// 标签名称
+                    remark: ' 签到了  ',
+                    type: 'holiday'
+                })
+            })
+            .then(response => response.json())
+            .then(json => console.log(json));
+        }, false);
+    </script>
+
+    <button id="btn17">没有休假，休假</button>
+    <script>
+        document.querySelector('#btn17').addEventListener('click', function() {
+            window.fetch('/log/create', {
+                method: 'POST',
+                headers: {
+            　　    'Content-Type': 'application/json',
+                    'token': window.token
+            　　},
+                body: JSON.stringify({
+                    taskId: 10,// 标签名称
+                    remark: ' 签到了  ',
+                    type: 'holiday'
+                })
+            })
+            .then(response => response.json())
+            .then(json => console.log(json));
+        }, false);
+    </script>
+
+<button id="btn18">没有休假，系统休假</button>
+<script>
+    document.querySelector('#btn18').addEventListener('click', function() {
+        window.fetch('/log/create', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　},
+            body: JSON.stringify({
+                taskId: 10,// 标签名称
+                remark: ' 签到了  ',
+                type: 'autoHoliday'
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+</script>
+
+
+<button id="btn19">有休假，要休假</button>
+<script>
+    document.querySelector('#btn19').addEventListener('click', function() {
+        window.fetch('/log/create', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　},
+            body: JSON.stringify({
+                taskId: 11,// 标签名称
+                remark: ' 签到了  ',
+                type: 'holiday'
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+</script>
+
+<button id="btn20">有休假，系统休假</button>
+<script>
+    document.querySelector('#btn20').addEventListener('click', function() {
+        window.fetch('/log/create', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　},
+            body: JSON.stringify({
+                taskId: 11,// 标签名称
+                remark: ' 签到了  ',
+                type: 'autoHoliday'
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+</script>
+    <button id="btn14">获取打卡详情</button>
+</body>
+</html>
+<script>
+    document.querySelector('#btn').addEventListener('click', function() {
+        window.fetch('/login', {
+            method: 'POST',
+            headers: {
+        　　　　'Content-Type': 'application/json'
+        　　},
+            body: JSON.stringify({
+                phone: '17610888798',
+                msgcode: '123456'
+            })
+        })
+        .then((response) => {
+            window.token = response.headers.get('token');
+            
+            return response.json();
+        })
+        .then(json => console.log(json));
+    }, false);
+    document.querySelector('#btn2').addEventListener('click', function() {
+        window.fetch('/login/sendmsg', {
+            method: 'POST',
+            headers: {
+        　　　　'Content-Type': 'application/json'
+        　　},
+            body: JSON.stringify({
+                phone: '17610888798'
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+    document.querySelector('#btn3').addEventListener('click', function() {
+        window.fetch('/logintest', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　},
+            body: JSON.stringify({
+                phone: '17610888798'
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+    document.querySelector('#btn4').addEventListener('click', function() {
+        window.fetch('/task/create', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　},
+            body: JSON.stringify({
+                title: '没有休假要休假',// 任务名称 String 必填
+                target: '没有休假要休假',// 任务目的 String 必填
+                tag: '',// 所属标签 外建关联tag表
+                allDays: 12,// 打卡需天数 int 必填
+                holidayDays: 2,// 打卡可已休假 int 必填
+                fine: 100,// 金额 double 必填
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+
+    document.querySelector('#btn5').addEventListener('click', function() {
+        window.fetch('/tag/create', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　},
+            body: JSON.stringify({
+                name: '红色',// 标签名称
+                color: '#FF0000',// 标签颜色
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+
+document.querySelector('#btn6').addEventListener('click', function() {
+    window.fetch('/tag/getList', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　},
+        body: JSON.stringify({
+            name: '红色',// 标签名称
+            color: '#FF0000',// 标签颜色
+        })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+
+document.querySelector('#btn7').addEventListener('click', function() {
+    window.fetch('/tag/delete', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　},
+        body: JSON.stringify({
+            tagId: 4,// 标签名称
+        })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+document.querySelector('#btn8').addEventListener('click', function() {
+    window.fetch('/tag/edit', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　},
+        body: JSON.stringify({
+            tagId: 3,// 标签名称
+            name: '蓝色',
+            color: '#0000FF'
+        })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+
+document.querySelector('#btn9').addEventListener('click', function() {
+    window.fetch('/task/delete', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　},
+        body: JSON.stringify({
+            taskId: 1,// 标签名称
+        })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+
+
+document.querySelector('#btn10').addEventListener('click', function() {
+    window.fetch('/task/edit', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　},
+        body: JSON.stringify({
+            taskId: 2,// 标签名称
+            target: '修改后的目的'
+        })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+
+
+document.querySelector('#btn11').addEventListener('click', function() {
+    window.fetch('/task/getList', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　}
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+
+
+
+document.querySelector('#btn12').addEventListener('click', function() {
+    window.fetch('/task/detail', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　},
+        body: JSON.stringify({
+            taskId: 2,// 标签名称
+        })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+
+document.querySelector('#btn14').addEventListener('click', function() {
+    window.fetch('/log/getList', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　},
+        body: JSON.stringify({
+            taskId: 2,// 标签名称
+        })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+
+
+document.querySelector('#btn15').addEventListener('click', function() {
+    window.fetch('/task/search', {
+        method: 'POST',
+        headers: {
+    　　    'Content-Type': 'application/json',
+            'token': window.token
+    　　},
+        body: JSON.stringify({
+            title: '测',// 标签名称
+        })
+    })
+    .then(response => response.json())
+    .then(json => console.log(json));
+}, false);
+
+
+</script>

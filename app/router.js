@@ -1,0 +1,21 @@
+module.exports = app => {
+    const { router, controller } = app;
+    router.get('/', controller.home.index);
+    router.post('/login', controller.login.index.index);
+    router.post('/validate', controller.login.index.validate);
+    router.post('/login/sendmsg', controller.login.sendmsg.index);
+    router.post('/logintest', controller.login.index.testLogin);
+    router.post('/tag/create', controller.tag.index.create);
+    router.post('/tag/getList', controller.tag.index.getList);
+    router.post('/tag/delete', controller.tag.index.delete);
+    router.post('/tag/edit', controller.tag.index.edit);
+    router.post('/task/create', controller.task.index.create);
+    router.post('/task/delete', controller.task.index.delete);
+    router.post('/task/edit', controller.task.index.edit);
+    router.post('/task/getList', controller.task.index.getList);
+    router.post('/task/detail', controller.task.index.detail);
+    router.post('/task/search', controller.task.index.search);
+    router.post('/log/create', controller.log.index.create);
+    router.post('/log/getList', controller.log.index.getList);
+    router.get('/news', controller.news.list);
+};
