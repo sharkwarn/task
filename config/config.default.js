@@ -39,5 +39,14 @@ exports.security = {
     csrf: {
         enable:false
     },
-  };
+};
+
+exports.alinode = {
+    server: 'wss://agentserver.node.aliyun.com:8080',
+    appid: '86308',
+    secret: 'c500502d6cd87f20bfb341941fb5612b4656ad8b',
+    logdir: '',
+    error_log: [],
+    agentidMode:''
+};
 
