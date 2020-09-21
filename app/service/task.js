@@ -36,15 +36,36 @@ class TaskService extends Service {
             ]
         });
         return Object.assign([], tasks).map(item=>{
-            item.taskCreated = moment(item.taskCreated).format('YYYY-MM-DD HH:mm');
+            const taskCreated = moment(item.taskCreated);
+            const currentStatus = item.currentStatus;
+            const allDays = item.allDays;
+            const a = moment().diff(taskCreated, 'days');
+            const b = currentStatus === 'done' ?  a + 1 : a;
+            item.taskCreated = taskCreated.format('YYYY-MM-DD HH:mm');
+            item.currentDay = b > allDays ? allDays : b;
             return item;
         });
+    }
+
+    // 获取未打卡任务
+    async getNoSignTask() {
+        let tasks = await this.app.mysql.select('user_test_task', {
+            where: {
+                currentStatus: 'nosign'
+            },
+            orders: [
+                ['taskId', 'desc']
+            ]
+        });
+        return tasks;
     }
     async search(params) {
         let tasks = await this.app.mysql.query(
             `select * from user_test_task where phone=?  and title like ?`, [params.phone, `%${params.title}%`]);
         return Object.assign([], tasks).map(item=>{
-            item.taskCreated = moment(item.taskCreated).format('YYYY-MM-DD HH:mm');
+            const taskCreated = moment(item.taskCreated);
+            item.taskCreated = taskCreated.format('YYYY-MM-DD HH:mm');
+            item.currentDay = moment().diff(taskCreated, 'days');
             return item;
         });
     }
@@ -76,6 +97,12 @@ class TaskService extends Service {
             // sign 已经签到
             obj.currentStatus = params.currentStatus;
         }
+        if (params.status) {
+            // nosign为签到
+            // holiday 休假
+            // sign 已经签到
+            obj.status = params.status;
+        }
         let res = await this.app.mysql.update('user_test_task', obj, {
             where: {
                 taskId: params.taskId,
@@ -89,6 +116,16 @@ class TaskService extends Service {
         }
     }
 
+    async sysUpdateTaskCurrentStatus(arr) {
+        let res = await this.app.mysql.query(`
+        update user_test_task
+        set currentStatus='nosign'
+        where taskId in
+        (select taskId  from (select * from user_test_task WHERE currentStatus='sign' and status='ongoing') as a);        
+        `);
+        return res;
+    }
+
     async detail(params) {
         let res = await this.app.mysql.get('user_test_task', {
             phone: params.phone,
@@ -98,15 +135,6 @@ class TaskService extends Service {
             res.taskCreated =  moment(res.taskCreated).format('YYYY-MM-DD HH:mm');
         }
         return res;
-    }
-
-    async getAllNoSignList() {
-        let tasks = await this.app.mysql.select('user_test_task', {
-            where: {
-                currentStatus: 'nosign'
-            }
-        });
-        return tasks;
     }
 }
 

@@ -112,6 +112,16 @@ class TaskController extends Controller {
         }
     }
 
+
+    async getNoSignTask() {
+        const res = await this.ctx.service.task.getNoSignTask();
+        this.ctx.body = {
+            success: true,
+            errmsg: '',
+            data: res
+        };
+    }
+
     async search() {
         const jwtParams = this.ctx.jwtParams;
         const params = this.ctx.request.body;

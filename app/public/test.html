@@ -144,7 +144,22 @@
         .then(json => console.log(json));
     }, false);
 </script>
-    <button id="btn14">获取打卡详情</button>
+<button id="btn14">获取打卡详情</button>
+<br />
+<button id="btn21">获取所有，今日未打卡任务</button>
+<script>
+    document.querySelector('#btn21').addEventListener('click', function() {
+        window.fetch('/task/getNoSignTask', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　}
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+</script>
 </body>
 </html>
 <script>
@@ -346,7 +361,7 @@ document.querySelector('#btn14').addEventListener('click', function() {
             'token': window.token
     　　},
         body: JSON.stringify({
-            taskId: 2,// 标签名称
+            taskId: 9,// 标签名称
         })
     })
     .then(response => response.json())

@@ -79,10 +79,8 @@ function verifySign({currentDate, createDate, allDays, type}) {
         // 插入完成标记
         // 更改任务状态status & currentStatus
         actions.push({
-            type: type,
-        });
-        actions.push({
-            type: 'done'
+            type: `${type}`,
+            status: 'done'
         });
         actions.push({
             type: 'taskDone'
