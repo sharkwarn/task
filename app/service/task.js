@@ -121,7 +121,7 @@ class TaskService extends Service {
         update user_test_task
         set currentStatus='nosign'
         where taskId in
-        (select taskId  from (select * from user_test_task WHERE currentStatus='sign' and status='ongoing') as a);        
+        (select taskId  from (select * from user_test_task WHERE currentStatus='done' and status='ongoing') as a);       
         `);
         return res;
     }
