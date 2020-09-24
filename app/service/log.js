@@ -106,7 +106,7 @@ class LogService extends Service {
         }
         let submits = [];
         const date = params.isSys
-        ? moment().add(-1, 'day').endOf().format('YYYY-MM-DD HH:mm:ss')
+        ? moment().startOf().format('YYYY-MM-DD HH:mm:ss')
         : moment().format('YYYY-MM-DD HH:mm:ss');
         for(let i = 0; i < arr.length; i++) {
             let func;

@@ -19,5 +19,6 @@ module.exports = {
         });
         const finalResult = await Promise.all(a);
         const change = await ctx.service.task.sysUpdateTaskCurrentStatus();
+        console.log('任务执行完成了', change);
     }
 };
