@@ -90,13 +90,14 @@ class LogService extends Service {
                 type: params.type
             });
         }
-        await this.ctx.service.log.submitService(actions, params, jwtParams);
+        await this.ctx.service.log.submitService(actions, params, jwtParams, dayofftaken);
         
     }
 
 
-    async submitService(arr, params, jwtParams) {
+    async submitService(arr, params, jwtParams, oldDayofftaken) {
         const err = arr.find(item => item.type === 'error');
+        let newDayofftaken = oldDayofftaken || 0;
         if (err) {
             this.ctx.body = {
                 success: false,
@@ -111,6 +112,9 @@ class LogService extends Service {
         for(let i = 0; i < arr.length; i++) {
             let func;
             let opeates = [];
+            if (arr[i].type === 'holiday' || arr[i].type === 'autoHoliday') {
+                newDayofftaken = oldDayofftaken + 1;
+            }
             switch(arr[i].type) {
                 case 'holiday':
                     func = this.ctx.service.log.create;
@@ -185,7 +189,8 @@ class LogService extends Service {
                         phone: jwtParams.phone,
                         currentStatus: 'done',
                         taskId: params.taskId,
-                        lastUpdate: date
+                        lastUpdate: date,
+                        dayofftaken: newDayofftaken
                     });
                     break;
                 default:

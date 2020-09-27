@@ -97,6 +97,9 @@ class TaskService extends Service {
             // sign 已经签到
             obj.currentStatus = params.currentStatus;
         }
+        if (params.dayofftaken) {
+            obj.dayofftaken = params.dayofftaken;
+        }
         if (params.status) {
             // nosign为签到
             // holiday 休假
