@@ -70,9 +70,10 @@ function verifyHoliday({dayofftaken, holidayDays, type}) {
  * @param {*} type 打卡类型，holiday 休假、 sign 签到
  * @returns 返回打卡后需要进行的操作
  */
-function verifySign({currentDate, createDate, allDays, type}) {
-    const haveSign = currentDate.diff(createDate, 'day');
+function verifySign({currentDate, taskCreated, allDays, type, status}) {
+    const haveSign = currentDate.diff(taskCreated, 'day');
     const actions = [];
+    console.log(status);
     // 最后一天打卡
     if (haveSign + 1 === allDays) {
         //插入最后一次打卡记录。
@@ -87,11 +88,19 @@ function verifySign({currentDate, createDate, allDays, type}) {
         });
     }
     // 不应该出现这种情况
-    else if (haveSign + 1 > allDays) {
+    else if (haveSign + 1 > allDays && status !== 'ongoing') {
         // 提示不可以打卡，任务已经结束
         actions.push({
             type: 'error',
             message: '任务已经结束'
+        });
+    } else if (haveSign + 1 > allDays && status === 'ongoing') {
+        // 也不应该出现这种情况
+        actions.push({
+            type: 'fail'
+        });
+        actions.push({
+            type: 'taskFail'
         });
     }
     // 正常打卡

@@ -71,7 +71,8 @@ class TaskController extends Controller {
             this.ctx.service.task.getList({
                 phone: jwtParams.phone,
                 title: params.title,
-                tag: params.tag
+                tag: params.tag,
+                status: params.status
             }),
             this.ctx.service.tag.getList({
                 phone: jwtParams.phone

@@ -13,6 +13,7 @@ exports.validate = {
     package: 'egg-validate',
 };
 
+// 性能监控
 exports.alinode = {
     enable: true,
     package: 'egg-alinode'

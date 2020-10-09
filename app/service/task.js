@@ -29,6 +29,9 @@ class TaskService extends Service {
         if (params.tag) {
             whereParams.tag = params.tag;
         }
+        if (params.status) {
+            whereParams.status = params.status;
+        }
         let tasks = await this.app.mysql.select('user_test_task', {
             where: whereParams,
             orders: [

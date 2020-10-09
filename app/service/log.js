@@ -52,7 +52,8 @@ class LogService extends Service {
             currentStatus,
             allDays,
             dayofftaken,
-            holidayDays
+            holidayDays,
+            status
         } = findDetail;
         const taskCreated = moment(findDetail.taskCreated).startOf('day');
         const currentDate = moment().startOf('day');
@@ -75,7 +76,8 @@ class LogService extends Service {
                 holidayDays,
                 taskCreated,
                 currentDate,
-                type: params.type
+                type: params.type,
+                status
             });
         }
         // 如果是打卡
@@ -87,7 +89,8 @@ class LogService extends Service {
                 holidayDays,
                 taskCreated,
                 currentDate,
-                type: params.type
+                type: params.type,
+                status
             });
         }
         await this.ctx.service.log.submitService(actions, params, jwtParams, dayofftaken);

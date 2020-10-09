@@ -1,3 +1,4 @@
+const path = require('path');
 exports.keys = 'sssssss';
 
 exports.view = {
@@ -43,10 +44,12 @@ exports.security = {
 
 exports.alinode = {
     server: 'wss://agentserver.node.aliyun.com:8080',
-    appid: '86308',
-    secret: 'c500502d6cd87f20bfb341941fb5612b4656ad8b',
-    logdir: '',
-    error_log: [],
+    appid: '86423',
+    secret: '9195570cacc1dbadffae17946f6a830db76cb7f4',
+    logdir: path.join(__dirname, '../logs'),
+    error_log: [
+        path.join(__dirname, '../errlogs'),
+    ],
     agentidMode:''
 };
 
