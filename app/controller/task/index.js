@@ -248,10 +248,6 @@ class TaskController extends Controller {
                     color: '#FFFFFF'
                 };
             }
-            detail.currentDay = moment().startOf('day').diff(
-                moment(detail.taskCreated).startOf('day'),
-                'days'
-            ) + 1;
             detail.logs = logs;
             this.ctx.body = {
                 success: true,

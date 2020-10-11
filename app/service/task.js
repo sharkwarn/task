@@ -40,10 +40,10 @@ class TaskService extends Service {
         });
         return Object.assign([], tasks).map(item=>{
             const taskCreated = moment(item.taskCreated);
-            const currentStatus = item.currentStatus;
+            const currentStatus = item.status;
             const allDays = item.allDays;
             const a = moment().diff(taskCreated, 'days');
-            const b = currentStatus === 'done' ?  a + 1 : a;
+            const b = currentStatus === 'ongoing' ?  a + 1 : a;
             item.taskCreated = taskCreated.format('YYYY-MM-DD HH:mm');
             item.currentDay = b > allDays ? allDays : b;
             return item;
@@ -138,7 +138,15 @@ class TaskService extends Service {
             taskId: params.taskId
         });
         if (res) {
-            res.taskCreated =  moment(res.taskCreated).format('YYYY-MM-DD HH:mm');
+            const taskCreated = moment(res.taskCreated);
+            const allDays = res.allDays;
+            res.taskCreated =  taskCreated.format('YYYY-MM-DD HH:mm');
+            if (res.status === 'ongoing') {
+                const a = moment().diff(taskCreated, 'days') + 1;
+                res.currentDay = a > allDays ? allDays : a;
+            } else {
+                res.currentDay = allDays;
+            }
         }
         return res;
     }
