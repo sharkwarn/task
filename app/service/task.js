@@ -1,7 +1,31 @@
 const Service = require('egg').Service;
 const moment = require('moment');
 const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
+
+function formatCurrentDay(detail) {
+    try {
+        let completedDay, currentDay;
+        const currentStatus = detail.currentStatus;
+        const taskCreated = moment(detail.taskCreated);
+        const allDays = detail.allDays;
+        if (detail.status === 'ongoing') {
+            const a = moment().endOf('day').diff(taskCreated, 'days');
+            const b = currentStatus === 'nosign' ? a : a + 1;
+            currentDay = a + 1 > allDays ? allDays : a + 1;
+            completedDay = b > allDays ? allDays : b;
+        } else {
+            currentDay = allDays;
+            completedDay = allDays;
+        }
+        return [currentDay, completedDay];
+    } catch (err) {
+        console.log(err);
+        return [
+            detail.allDays,
+            detail.allDays
+        ];
+    }
+}
 
 class TaskService extends Service {
     async create(params) {
@@ -40,12 +64,10 @@ class TaskService extends Service {
         });
         return Object.assign([], tasks).map(item=>{
             const taskCreated = moment(item.taskCreated);
-            const currentStatus = item.status;
-            const allDays = item.allDays;
-            const a = moment().diff(taskCreated, 'days');
-            const b = currentStatus === 'ongoing' ?  a + 1 : a;
+            const [currentDay, completedDay] = formatCurrentDay(item)
             item.taskCreated = taskCreated.format('YYYY-MM-DD HH:mm');
-            item.currentDay = b > allDays ? allDays : b;
+            item.currentDay = currentDay;
+            item.completedDay = completedDay;
             return item;
         });
     }
@@ -67,8 +89,10 @@ class TaskService extends Service {
             `select * from user_test_task where phone=?  and title like ?`, [params.phone, `%${params.title}%`]);
         return Object.assign([], tasks).map(item=>{
             const taskCreated = moment(item.taskCreated);
+            const [currentDay, completedDay] = formatCurrentDay(item)
             item.taskCreated = taskCreated.format('YYYY-MM-DD HH:mm');
-            item.currentDay = moment().diff(taskCreated, 'days');
+            item.currentDay = currentDay;
+            item.completedDay = completedDay;
             return item;
         });
     }
@@ -139,14 +163,10 @@ class TaskService extends Service {
         });
         if (res) {
             const taskCreated = moment(res.taskCreated);
-            const allDays = res.allDays;
-            res.taskCreated =  taskCreated.format('YYYY-MM-DD HH:mm');
-            if (res.status === 'ongoing') {
-                const a = moment().diff(taskCreated, 'days') + 1;
-                res.currentDay = a > allDays ? allDays : a;
-            } else {
-                res.currentDay = allDays;
-            }
+            const [currentDay, completedDay] = formatCurrentDay(res)
+            res.taskCreated = taskCreated.format('YYYY-MM-DD HH:mm');
+            res.currentDay = currentDay;
+            res.completedDay = completedDay;
         }
         return res;
     }
