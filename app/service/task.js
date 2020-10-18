@@ -56,6 +56,9 @@ class TaskService extends Service {
         if (params.status) {
             whereParams.status = params.status;
         }
+        if (params.currentStatus) {
+            whereParams.currentStatus = params.currentStatus;
+        }
         let tasks = await this.app.mysql.select('user_test_task', {
             where: whereParams,
             orders: [
@@ -114,6 +117,15 @@ class TaskService extends Service {
         };
         if (params.title) {
             obj.title = params.title;
+        }
+        if (params.target) {
+            obj.target = params.target;
+        }
+        if (params.punishment) {
+            obj.punishment = params.punishment;
+        }
+        if (params.reward) {
+            obj.reward = params.reward;
         }
         if (params.target) {
             obj.target = params.target;

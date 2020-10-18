@@ -73,7 +73,6 @@ function verifyHoliday({dayofftaken, holidayDays, type}) {
 function verifySign({currentDate, taskCreated, allDays, type, status}) {
     const haveSign = currentDate.diff(taskCreated, 'day');
     const actions = [];
-    console.log(status);
     // 最后一天打卡
     if (haveSign + 1 === allDays) {
         //插入最后一次打卡记录。

@@ -10,10 +10,6 @@ class TaskController extends Controller {
                 type: 'string',
                 require: true
             },
-            target: {
-                type: 'string',
-                require: true
-            },
             allDays: {
                 type: 'number',
                 require: true
@@ -44,6 +40,8 @@ class TaskController extends Controller {
             holidayDays: params.holidayDays,
             fine: params.fine,
             tag: params.tag ? params.tag : 2,
+            reward: params.reward,
+            punishment: params.punishment,
             phone: jwtParams.phone,
             dayofftaken: 0,
             currentStatus: 'nosign',
@@ -72,7 +70,8 @@ class TaskController extends Controller {
                 phone: jwtParams.phone,
                 title: params.title,
                 tag: params.tag,
-                status: params.status
+                status: params.status,
+                currentStatus: params.currentStatus
             }),
             this.ctx.service.tag.getList({
                 phone: jwtParams.phone
@@ -98,7 +97,8 @@ class TaskController extends Controller {
                     }
                 }
                 return item;
-            })
+            });
+            // console.log(list);
             this.ctx.body = {
                 success: true,
                 errmsg: '',
@@ -192,10 +192,10 @@ class TaskController extends Controller {
     async edit() {
         const jwtParams = this.ctx.jwtParams;
         const params = this.ctx.request.body;
-        if (!params.title && !params.target) {
+        if (!params.title && !params.target && !params.reward && !params.punishment) {
             this.ctx.body = {
                 success: false,
-                errmsg: '修改名称和目的不可以同时为空'
+                errmsg: '没有修改内容'
             };
             return;
         }
@@ -203,6 +203,8 @@ class TaskController extends Controller {
             taskId: params.taskId,
             title: params.title,
             target: params.target,
+            reward: params.reward,
+            punishment: params.punishment,
             phone: jwtParams.phone,
             lastUpdate: moment().format('YYYY-MM-DD HH:mm:ss')
         });
