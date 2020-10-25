@@ -45,7 +45,7 @@ class TaskController extends Controller {
             phone: jwtParams.phone,
             dayofftaken: 0,
             currentStatus: 'nosign',
-            status: 'ongoing',
+            status: params.willStart ? 'willStart' : 'ongoing',
             lastUpdate: moment().format('YYYY-MM-DD HH:mm:ss'),
             taskCreated: moment().format('YYYY-MM-DD HH:mm:ss')
         });
@@ -192,7 +192,7 @@ class TaskController extends Controller {
     async edit() {
         const jwtParams = this.ctx.jwtParams;
         const params = this.ctx.request.body;
-        if (!params.title && !params.target && !params.reward && !params.punishment) {
+        if (!params.title && !params.target && !params.reward && !params.punishment && !params.tag) {
             this.ctx.body = {
                 success: false,
                 errmsg: '没有修改内容'
@@ -205,6 +205,7 @@ class TaskController extends Controller {
             target: params.target,
             reward: params.reward,
             punishment: params.punishment,
+            tag: params.tag,
             phone: jwtParams.phone,
             lastUpdate: moment().format('YYYY-MM-DD HH:mm:ss')
         });
@@ -224,11 +225,6 @@ class TaskController extends Controller {
     async detail() {
         const jwtParams = this.ctx.jwtParams;
         const params = this.ctx.request.body;
-        await new Promise((resolve) => {
-            setTimeout(()=>{
-                resolve();
-            }, 1000);
-        });
         const [detail, logs] = await Promise.all([
             this.ctx.service.task.detail({
                 taskId: params.taskId,
@@ -264,6 +260,87 @@ class TaskController extends Controller {
             };
         }
     }
+
+    async restart() {
+        const jwtParams = this.ctx.jwtParams;
+        const params = this.ctx.request.body;
+        const createRule = {
+            taskId: {
+                type: 'number',
+                require: true
+            },
+            title: {
+                type: 'string',
+                require: true
+            },
+            allDays: {
+                type: 'number',
+                require: true
+            },
+            holidayDays: {
+                type: 'number',
+                require: true
+            },
+            fine: {
+                type: 'number',
+                require: true
+            }
+        };
+        try {
+            this.ctx.validate(createRule);
+        } catch (err) {
+            this.ctx.logger.warn(err.errors);
+            this.ctx.body = {
+                success: false,
+                errmsg: err.errors
+            };
+            return;
+        }
+        const detail = await this.ctx.service.task.detail({
+            phone: jwtParams.phone,
+            taskId: params.taskId
+        });
+        const res = await this.ctx.service.task.restart({
+            taskId: params.taskId,
+            title: params.title,
+            target: params.target,
+            allDays: params.allDays,
+            holidayDays: params.holidayDays,
+            fine: params.fine,
+            tag: params.tag ? params.tag : 2,
+            reward: params.reward,
+            punishment: params.punishment,
+            phone: jwtParams.phone,
+            dayofftaken: 0,
+            currentStatus: 'nosign',
+            status: params.willStart ? 'willStart' : 'ongoing',
+            preAllDays: detail.haveSignDays,
+            haveSignDays: detail.haveSignDays,
+            lastUpdate: moment().format('YYYY-MM-DD HH:mm:ss'),
+            taskCreated: moment().format('YYYY-MM-DD HH:mm:ss')
+        });
+        if (res === true) {
+            this.ctx.body = {
+                success: true,
+                errmsg: '',
+                data: '重新开始成功'
+            };
+        } else {
+            this.ctx.body = {
+                success: false,
+                errmsg: '重新开始失败'
+            };
+        }
+    }
+
+    // async computeHaveSignDays() {
+    //     const res = await this.ctx.service.task.computeHaveSignDays();
+    //     this.ctx.body = {
+    //         success: true,
+    //         errmsg: '',
+    //         data: res
+    //     };
+    // }
 }
 
 module.exports = TaskController;

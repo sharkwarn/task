@@ -160,6 +160,23 @@
         .then(json => console.log(json));
     }, false);
 </script>
+<br />
+
+<!-- 
+<button id="btn22">执行脚本</button>
+<script>
+    document.querySelector('#btn22').addEventListener('click', function() {
+        window.fetch('/me', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　}
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+</script> -->
 </body>
 </html>
 <script>

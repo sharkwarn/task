@@ -53,7 +53,8 @@ class LogService extends Service {
             allDays,
             dayofftaken,
             holidayDays,
-            status
+            status,
+            haveSignDays
         } = findDetail;
         const taskCreated = moment(findDetail.taskCreated).startOf('day');
         const currentDate = moment().startOf('day');
@@ -92,15 +93,20 @@ class LogService extends Service {
                 type: params.type,
                 status
             });
+        } else if (params.type === 'fail') {
+            actions = [
+                {type: 'fail'},
+                {type: 'taskFail'}
+            ];
         }
-        await this.ctx.service.log.submitService(actions, params, jwtParams, dayofftaken);
+        await this.ctx.service.log.submitService(actions, params, jwtParams, {dayofftaken, haveSignDays});
         
     }
 
 
-    async submitService(arr, params, jwtParams, oldDayofftaken) {
+    async submitService(arr, params, jwtParams, {dayofftaken, haveSignDays = 0}) {
         const err = arr.find(item => item.type === 'error');
-        let newDayofftaken = oldDayofftaken || 0;
+        let newDayofftaken = dayofftaken || 0;
         if (err) {
             this.ctx.body = {
                 success: false,
@@ -116,7 +122,7 @@ class LogService extends Service {
             let func;
             let opeates = [];
             if (arr[i].type === 'holiday' || arr[i].type === 'autoHoliday') {
-                newDayofftaken = oldDayofftaken + 1;
+                newDayofftaken = dayofftaken + 1;
             }
             switch(arr[i].type) {
                 case 'holiday':
@@ -158,7 +164,7 @@ class LogService extends Service {
                 case 'fail':
                     func = this.ctx.service.log.create;
                     opeates.push({
-                        remark: '失败',
+                        remark: params.remark || '失败',
                         type: 'fail',
                         checkTime: date,
                         taskId: params.taskId
@@ -172,7 +178,8 @@ class LogService extends Service {
                         lastUpdate: date,
                         currentStatus: 'done',
                         status: 'success',
-                        lastUpdate: date
+                        lastUpdate: date,
+                        haveSignDays: haveSignDays + 1
                     });
                     break;
                 case 'taskFail':
@@ -193,7 +200,8 @@ class LogService extends Service {
                         currentStatus: 'done',
                         taskId: params.taskId,
                         lastUpdate: date,
-                        dayofftaken: newDayofftaken
+                        dayofftaken: newDayofftaken,
+                        haveSignDays: haveSignDays + 1
                     });
                     break;
                 default:

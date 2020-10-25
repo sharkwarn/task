@@ -18,6 +18,7 @@ class LogController extends Controller {
                     'fail',
                     'stop',
                     'delete',
+                    'restart',
                     // 下面两个为系统打卡，用户不会提交。
                     'autoHoliday'
                 ]

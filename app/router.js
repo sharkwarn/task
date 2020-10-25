@@ -10,6 +10,7 @@ module.exports = app => {
     router.post('/tag/delete', controller.tag.index.delete);
     router.post('/tag/edit', controller.tag.index.edit);
     router.post('/task/create', controller.task.index.create);
+    router.post('/task/restart', controller.task.index.restart);
     router.post('/task/delete', controller.task.index.delete);
     router.post('/task/edit', controller.task.index.edit);
     router.post('/task/getList', controller.task.index.getList);
@@ -19,4 +20,5 @@ module.exports = app => {
     router.post('/log/create', controller.log.index.create);
     router.post('/log/getList', controller.log.index.getList);
     router.get('/news', controller.news.list);
+    // router.post('/me', controller.task.index.computeHaveSignDays);
 };

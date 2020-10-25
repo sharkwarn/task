@@ -61,7 +61,7 @@ class TaskService extends Service {
         }
         let tasks = await this.app.mysql.select('user_test_task', {
             where: whereParams,
-            orders: [
+            orders: params.orders || [
                 ['taskCreated', 'desc']
             ]
         });
@@ -130,6 +130,9 @@ class TaskService extends Service {
         if (params.target) {
             obj.target = params.target;
         }
+        if (params.tag) {
+            obj.tag = params.tag;
+        }
         if (params.currentStatus) {
             // nosign为签到
             // holiday 休假
@@ -138,6 +141,9 @@ class TaskService extends Service {
         }
         if (params.dayofftaken) {
             obj.dayofftaken = params.dayofftaken;
+        }
+        if (params.haveSignDays) {
+            obj.haveSignDays = params.haveSignDays;
         }
         if (params.status) {
             // nosign为签到
@@ -167,6 +173,16 @@ class TaskService extends Service {
         `);
         return res;
     }
+    // 将即将开始的任务状态改为ongoing
+    async sysUpdateTaskCurrentStatus(arr) {
+        let res = await this.app.mysql.query(`
+        update user_test_task
+        set status='ongoing'
+        where taskId in
+        (select taskId  from (select * from user_test_task WHERE status='willStart') as a);       
+        `);
+        return res;
+    }
 
     async detail(params) {
         let res = await this.app.mysql.get('user_test_task', {
@@ -182,6 +198,75 @@ class TaskService extends Service {
         }
         return res;
     }
+
+    async restart(params) {
+        console.log('重新开始参数', params);
+        let res = await this.app.mysql.update('user_test_task', params, {
+            where: {
+                taskId: params.taskId,
+                phone: params.phone
+            }
+        });
+        if (!res.affectedRows === 1) {
+            return false;
+        }
+        const insertLog = await this.ctx.service.log.create({
+            remark: '重新开始',
+            type: 'restart',
+            checkTime: moment().format('YYYY-MM-DD HH:mm'),
+            taskId: params.taskId
+        });
+        if (insertLog) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // async a(task) {
+    //     const res = await this.ctx.service.log.getList({
+    //         taskId: task.taskId
+    //     });
+    //     const obj = {
+    //         ...task,
+    //         log: res
+    //     };
+    //     const detail = this.ctx.service.task.computeddays(obj);
+    //     const result = this.ctx.service.task.setHaveSignDays(detail.taskId, detail.haveSignDays);
+    //     return result;
+    // }
+
+    // computeddays(task) {
+    //     const log = Object.assign([], task.log);
+    //     const arr = log.filter(item => item.type === 'autoHoliday' || item.type === 'holiday' || item.type === 'sign');
+    //     task.haveSignDays = arr.length;
+    //     return task;
+    // }
+
+    // async setHaveSignDays(taskId, day) {
+    //     let res = await this.app.mysql.update('user_test_task', {
+    //         haveSignDays: day
+    //     }, {
+    //         where: {
+    //             taskId: taskId
+    //         }
+    //     });
+    //     if (res.affectedRows === 1) {
+    //         return true;
+    //     } else {
+    //         console.log('失败了。', taskId);
+    //         return false;
+    //     }
+    // }
+
+    // async computeHaveSignDays() {
+    //     const tasks = await this.app.mysql.query('SELECT * FROM `user_test_task`');
+    //     const arr = tasks.map(item => {
+    //         return this.ctx.service.task.a(item);
+    //     });
+    //     const res = await Promise.all(arr);
+    //     return res;
+    // }
 }
 
 module.exports = TaskService;
