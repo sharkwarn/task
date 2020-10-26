@@ -341,6 +341,14 @@ class TaskController extends Controller {
     //         data: res
     //     };
     // }
+    async sys() {
+        const res = await this.ctx.service.task.sysUpdateWillStartStatus();
+        this.ctx.body = {
+            success: true,
+            errmsg: '',
+            data: res
+        };
+    }
 }
 
 module.exports = TaskController;

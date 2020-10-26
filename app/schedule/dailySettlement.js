@@ -19,6 +19,8 @@ module.exports = {
         });
         const finalResult = await Promise.all(a);
         const change = await ctx.service.task.sysUpdateTaskCurrentStatus();
-        console.log('任务执行完成了', change);
+        console.log('将任务重制', change);
+        const change2 = await ctx.service.task.sysUpdateWillStartStatus();
+        console.log('将明天开始的任务变成可打卡', change2);
     }
 };

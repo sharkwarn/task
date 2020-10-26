@@ -174,7 +174,7 @@ class TaskService extends Service {
         return res;
     }
     // 将即将开始的任务状态改为ongoing
-    async sysUpdateTaskCurrentStatus(arr) {
+    async sysUpdateWillStartStatus(arr) {
         let res = await this.app.mysql.query(`
         update user_test_task
         set status='ongoing'
