@@ -342,7 +342,7 @@ class TaskController extends Controller {
     //     };
     // }
     async sys() {
-        const res = await this.ctx.service.task.sysUpdateWillStartStatus();
+        const res = await this.ctx.service.task.getNoSignTask();
         this.ctx.body = {
             success: true,
             errmsg: '',

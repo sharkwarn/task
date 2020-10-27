@@ -79,7 +79,8 @@ class TaskService extends Service {
     async getNoSignTask() {
         let tasks = await this.app.mysql.select('user_test_task', {
             where: {
-                currentStatus: 'nosign'
+                currentStatus: 'nosign',
+                status: 'ongoing'
             },
             orders: [
                 ['taskId', 'desc']
@@ -200,7 +201,6 @@ class TaskService extends Service {
     }
 
     async restart(params) {
-        console.log('重新开始参数', params);
         let res = await this.app.mysql.update('user_test_task', params, {
             where: {
                 taskId: params.taskId,
@@ -211,7 +211,7 @@ class TaskService extends Service {
             return false;
         }
         const insertLog = await this.ctx.service.log.create({
-            remark: '重新开始',
+            remark: '再来一次',
             type: 'restart',
             checkTime: moment().format('YYYY-MM-DD HH:mm'),
             taskId: params.taskId
