@@ -34,10 +34,27 @@ class TagService extends Service {
         }
     }
     async delete(params) {
+        const list = await this.ctx.service.task.getList({
+            phone: params.phone,
+            tag: params.tagId
+        });
+        const lastUpdate = moment().format('YYYY-MM-DD HH:mm:ss');
+        const arr = list.map(item => {
+            return this.ctx.service.task.edit({
+                taskId: item.taskId,
+                lastUpdate,
+                phone: params.phone,
+                status: 'delete'
+            });
+        })
+        const batchRes = await Promise.all(arr);
+        // 失败情况下怎么处理。
+        let flag = batchRes.find(item => item === false);
         const res = await this.app.mysql.delete('user_test_tag', {
             phone: params.phone,
             tagId: params.tagId
         });
+
         if (res && res.affectedRows === 1) {
             return true;
         } else {

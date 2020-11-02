@@ -150,6 +150,7 @@ class TaskService extends Service {
             // nosign为签到
             // holiday 休假
             // sign 已经签到
+            // delete 删除
             obj.status = params.status;
         }
         let res = await this.app.mysql.update('user_test_task', obj, {
