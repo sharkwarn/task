@@ -268,6 +268,70 @@ class TaskService extends Service {
     //     const res = await Promise.all(arr);
     //     return res;
     // }
+
+    async editReward(params) {
+        let obj = {
+            rewardTime: moment().format('YYYY-MM-DD'),
+            rewardstatus: params.rewardstatus
+        };
+        let res = await this.app.mysql.update('user_test_task', obj, {
+            where: {
+                taskId: params.taskId,
+                phone: params.phone
+            }
+        });
+        if (res.affectedRows === 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async getRewardList(params) {
+        const currentDay = moment();
+        const day = currentDay.format('YYYY-MM-DD');
+        console.log(params, '222222222');
+        let res = await this.app.mysql.query(`
+        select a.lastUpdate , 
+            a.taskId,
+            b.name as 'tagName',
+            b.color as 'tagColor',
+            a.title, 
+            a.reward , 
+            a.punishment,
+            a.rewardstatus,
+            a.rewardTime
+        from (
+            select
+            taskId,
+            lastUpdate, 
+            title, 
+            reward , 
+            punishment,  
+            tag,
+            rewardstatus,
+            rewardTime
+            from user_test_task
+            where phone = ?
+            and (reward != '' or punishment !='')
+            and status in ('ongoing') or lastUpdate like ?
+        ) a
+        inner join (
+            select tagId, name, color
+            from user_test_tag
+            ${params.tagId ? 'where tagId = ?' : ''}
+        ) b
+        on a.tag = b.tagId   
+        `, [params.phone, `&${day}%`, params.tagId]);
+        return Object.assign([], res).map(item => {
+            if (item.rewardTime) {
+                const rewardTime = moment(item.rewardTime)
+                const diff = currentDay.diff(rewardTime, 'days');
+                item.rewardstatus = diff === 0 ? item.rewardstatus : null;
+            }
+            return item;
+        });
+    }
 }
 
 module.exports = TaskService;

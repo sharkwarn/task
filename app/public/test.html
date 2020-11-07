@@ -177,6 +177,23 @@
         .then(json => console.log(json));
     }, false);
 </script>
+<br />
+
+
+<button id="btn23">获取奖励列表</button>
+<script>
+    document.querySelector('#btn23').addEventListener('click', function() {
+        window.fetch('/task/rewardList', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　}
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+</script>
 </body>
 </html>
 <script>

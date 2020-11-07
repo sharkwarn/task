@@ -341,6 +341,63 @@ class TaskController extends Controller {
     //         data: res
     //     };
     // }
+
+    async editReward() {
+        const jwtParams = this.ctx.jwtParams;
+        const params = this.ctx.request.body;
+        const createRule = {
+            rewardstatus: {
+                type: 'number',
+                require: true
+            },
+            taskId: {
+                type: 'number',
+                require: true
+            }
+        };
+        try {
+            this.ctx.validate(createRule);
+        } catch (err) {
+            this.ctx.logger.warn(err.errors);
+            this.ctx.body = {
+                success: false,
+                errmsg: err.errors
+            };
+            return;
+        }
+        const res = await this.ctx.service.task.editReward({
+            phone: jwtParams.phone,
+            rewardstatus: params.rewardstatus,
+            taskId: params.taskId
+        });
+        if (res === true) {
+            this.ctx.body = {
+                success: true,
+                errmsg: '',
+                data: '测试成功'
+            };
+        } else {
+            this.ctx.body = {
+                success: false,
+                errmsg: ''
+            };
+        }
+    }
+
+    async rewardList() {
+        const jwtParams = this.ctx.jwtParams;
+        const params = this.ctx.request.body;
+        const res = await this.ctx.service.task.getRewardList({
+            phone: jwtParams.phone,
+            tagId: params.tagId
+        });
+        this.ctx.body = {
+            success: true,
+            errmsg: '',
+            data: res
+        };
+    }
+
     async sys() {
         const res = await this.ctx.service.task.getNoSignTask();
         this.ctx.body = {

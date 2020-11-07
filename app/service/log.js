@@ -116,7 +116,7 @@ class LogService extends Service {
         }
         let submits = [];
         const date = params.isSys
-        ? moment().startOf().format('YYYY-MM-DD HH:mm:ss')
+        ? moment().startOf('days').add(-1, 'seconds').format('YYYY-MM-DD HH:mm:ss')
         : moment().format('YYYY-MM-DD HH:mm:ss');
         for(let i = 0; i < arr.length; i++) {
             let func;
@@ -175,7 +175,6 @@ class LogService extends Service {
                     opeates.push({
                         phone: jwtParams.phone,
                         taskId: params.taskId,
-                        lastUpdate: date,
                         currentStatus: 'done',
                         status: 'success',
                         lastUpdate: date,
@@ -187,7 +186,6 @@ class LogService extends Service {
                     opeates.push({
                         phone: jwtParams.phone,
                         taskId: params.taskId,
-                        lastUpdate: date,
                         currentStatus: 'done',
                         status: 'fail',
                         lastUpdate: date

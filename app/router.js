@@ -16,6 +16,8 @@ module.exports = app => {
     router.post('/task/getList', controller.task.index.getList);
     router.post('/task/detail', controller.task.index.detail);
     router.post('/task/search', controller.task.index.search);
+    router.post('/task/rewardList', controller.task.index.rewardList);
+    router.post('/task/editReward', controller.task.index.editReward);
     router.post('/task/getNoSignTask', controller.task.index.getNoSignTask);
     router.post('/sys', controller.task.index.sys);
     router.post('/log/create', controller.log.index.create);

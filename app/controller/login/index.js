@@ -36,6 +36,12 @@ class LoginController extends Controller {
     
   }
 
+  async signIn() {
+    const token = this.ctx.header.token;
+    const params = jwt.decode(token, 'sara_todo_xiaowu');
+    const {phone} = this.ctx.request.body;
+  }
+
   async validate() {
     const token = this.ctx.header.token;
     const params = jwt.decode(token, 'sara_todo_xiaowu');
