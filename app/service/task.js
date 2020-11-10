@@ -289,6 +289,7 @@ class TaskService extends Service {
 
     async getRewardList(params) {
         const currentDay = moment();
+        const day = currentDay.format('YYYY-MM-DD');
         let res = await this.app.mysql.query(`
         select a.lastUpdate , 
             a.taskId,
