@@ -116,19 +116,19 @@ class TaskService extends Service {
             phone: params.phone,
             lastUpdate: params.lastUpdate
         };
-        if (params.title) {
+        if (params.title !== undefined) {
             obj.title = params.title;
         }
-        if (params.target) {
+        if (params.target !== undefined) {
             obj.target = params.target;
         }
-        if (params.punishment) {
+        if (params.punishment !== undefined) {
             obj.punishment = params.punishment;
         }
-        if (params.reward) {
+        if (params.reward !== undefined) {
             obj.reward = params.reward;
         }
-        if (params.target) {
+        if (params.target !== undefined) {
             obj.target = params.target;
         }
         if (params.tag) {
@@ -289,8 +289,6 @@ class TaskService extends Service {
 
     async getRewardList(params) {
         const currentDay = moment();
-        const day = currentDay.format('YYYY-MM-DD');
-        console.log(params, '222222222');
         let res = await this.app.mysql.query(`
         select a.lastUpdate , 
             a.taskId,

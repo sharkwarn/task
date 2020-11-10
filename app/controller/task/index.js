@@ -192,7 +192,7 @@ class TaskController extends Controller {
     async edit() {
         const jwtParams = this.ctx.jwtParams;
         const params = this.ctx.request.body;
-        if (!params.title && !params.target && !params.reward && !params.punishment && !params.tag) {
+        if (params.title != undefined && params.target != undefined && params.reward != undefined && params.punishment != undefined && params.tag != undefined) {
             this.ctx.body = {
                 success: false,
                 errmsg: '没有修改内容'
