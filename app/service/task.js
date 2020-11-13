@@ -200,12 +200,17 @@ class TaskService extends Service {
             phone: params.phone,
             taskId: params.taskId
         });
+        console.log(111111);
         if (res) {
             const taskCreated = moment(res.taskCreated);
             const [currentDay, completedDay] = formatCurrentDay(res)
             res.taskCreated = taskCreated.format('YYYY-MM-DD HH:mm');
             res.currentDay = currentDay;
             res.completedDay = completedDay;
+            const countTime = res.countTime;
+            if (moment().diff(moment(countTime), 'days') > 0) {
+                res.count = 0;
+            }
         }
         return res;
     }
