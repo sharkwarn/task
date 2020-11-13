@@ -156,6 +156,9 @@ class TaskService extends Service {
             // delete 删除
             obj.status = params.status;
         }
+        if (params.counter !== undefined && params.counter !== null) {
+            obj.counter = params.counter;
+        }
         if (params.count) {
             obj.count = params.count;
         }

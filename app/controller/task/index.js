@@ -209,7 +209,8 @@ class TaskController extends Controller {
             punishment: params.punishment,
             tag: params.tag,
             phone: jwtParams.phone,
-            lastUpdate: moment().format('YYYY-MM-DD HH:mm:ss')
+            lastUpdate: moment().format('YYYY-MM-DD HH:mm:ss'),
+            counter: params.counter
         });
         if (res) {
             this.ctx.body = {
