@@ -47,8 +47,10 @@ class TaskController extends Controller {
             currentStatus: 'nosign',
             status: params.willStart ? 'willStart' : 'ongoing',
             lastUpdate: moment().format('YYYY-MM-DD HH:mm:ss'),
-            taskCreated: moment().format('YYYY-MM-DD HH:mm:ss')
+            taskCreated: moment().format('YYYY-MM-DD HH:mm:ss'),
+            counter: +params.counter === 1 ? 1 : 0
         });
+        console.log(params);
         if (res === true) {
             this.ctx.body = {
                 success: true,

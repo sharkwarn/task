@@ -36,6 +36,7 @@ class TaskService extends Service {
                 remark: '创建',
                 type: 'create',
                 checkTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+                changetime: moment().format('YYYY-MM-DD'),
                 taskId: taskId
             });
             if (resLog) {
@@ -114,8 +115,10 @@ class TaskService extends Service {
     async edit(params) {
         let obj = {
             phone: params.phone,
-            lastUpdate: params.lastUpdate
         };
+        if (params.lastUpdate) {
+            obj.lastUpdate = params.lastUpdate
+        }
         if (params.title !== undefined) {
             obj.title = params.title;
         }
@@ -152,6 +155,12 @@ class TaskService extends Service {
             // sign 已经签到
             // delete 删除
             obj.status = params.status;
+        }
+        if (params.count) {
+            obj.count = params.count;
+        }
+        if (params.countTime) {
+            obj.countTime = params.countTime;
         }
         let res = await this.app.mysql.update('user_test_task', obj, {
             where: {
@@ -215,6 +224,7 @@ class TaskService extends Service {
             remark: '再来一次',
             type: 'restart',
             checkTime: moment().format('YYYY-MM-DD HH:mm'),
+            changetime: moment().format('YYYY-MM-DD'),
             taskId: params.taskId
         });
         if (insertLog) {

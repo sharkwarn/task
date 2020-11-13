@@ -194,6 +194,28 @@
         .then(json => console.log(json));
     }, false);
 </script>
+<br />
+
+
+<button id="btn24">创建计数器</button>
+<script>
+    document.querySelector('#btn24').addEventListener('click', function() {
+        window.fetch('/log/counter', {
+            method: 'POST',
+            headers: {
+        　　    'Content-Type': 'application/json',
+                'token': window.token
+        　　},
+            body: JSON.stringify({
+                taskId: 48,// 标签名称
+                type: 'counter',
+                count: 36
+            })
+        })
+        .then(response => response.json())
+        .then(json => console.log(json));
+    }, false);
+</script>
 </body>
 </html>
 <script>

@@ -20,7 +20,9 @@ class LogController extends Controller {
                     'delete',
                     'restart',
                     // 下面两个为系统打卡，用户不会提交。
-                    'autoHoliday'
+                    'autoHoliday',
+                    // 计次功能
+                    'count'
                 ]
             },
             taskId: {
@@ -40,6 +42,38 @@ class LogController extends Controller {
         }
         await this.ctx.service.log.validateCreate(params, jwtParams);
     }
+    
+    async counter() {
+        const params = this.ctx.request.body;
+        const jwtParams = this.ctx.jwtParams;
+        const createRule = {
+            taskId: {
+                type: 'number',
+                require: true
+            },
+            count: {
+                type: 'number',
+                require: true,
+            }
+        };
+        try {
+            this.ctx.validate(createRule);
+        } catch (err) {
+            this.ctx.logger.warn(err.errors);
+            this.ctx.body = {
+                success: false,
+                errmsg: err.errors
+            };
+            return;
+        }
+        const flag = await this.ctx.service.log.counter(params, jwtParams);
+        this.ctx.body = {
+            success: flag,
+            errmsg: flag ? '成功' : '服务器错误'
+        };
+        return;
+    }
+
     async getList() {
         const params = this.ctx.request.body;
         const res = await this.ctx.service.log.getList({

@@ -22,6 +22,7 @@ module.exports = app => {
     router.post('/sys', controller.task.index.sys);
     router.post('/log/create', controller.log.index.create);
     router.post('/log/getList', controller.log.index.getList);
+    router.post('/log/counter', controller.log.index.counter);
     router.get('/news', controller.news.list);
     // router.post('/me', controller.task.index.computeHaveSignDays);
 };

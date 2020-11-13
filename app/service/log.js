@@ -17,6 +17,61 @@ class LogService extends Service {
             return false;
         }
     }
+
+    async counter(params, jwtParams) {
+        let day = moment();
+        let res = await this.app.mysql.query(`
+        select
+        *
+        from user_test_log
+        where taskId = ?
+        and type = 'counter'
+        and changetime = ?  
+        `, [params.taskId, `${day.format('YYYY-MM-DD')}`]);
+
+        let flag = false;
+        if (res && res.length === 0) {
+            const obj = {
+                type: 'counter',
+                taskId: +params.taskId,
+                checkTime: day.format('YYYY-MM-DD HH:mm:ss'),
+                changetime: day.format('YYYY-MM-DD'),
+                count: params.count
+            };
+            flag = await this.ctx.service.log.create(obj);
+        } else if (res && res.length === 1) {
+            const obj = {
+                checkTime: day.format('YYYY-MM-DD HH:mm:ss'),
+                changetime: day.format('YYYY-MM-DD'),
+                count: params.count
+            };
+            flag = await this.ctx.service.log.edit(res[0].logId, obj);
+        }
+        if (flag) {
+            const res = await this.ctx.service.task.edit({
+                phone: jwtParams.phone,
+                taskId: params.taskId,
+                count: params.count,
+                countTime: day.format('YYYY-MM-DD')
+            });
+            return res;
+        }
+        return flag;
+    }
+
+    async edit(logId, params) {
+        let res = await this.app.mysql.update('user_test_log', params, {
+            where: {
+                logId: logId
+            }
+        });
+        if (res.affectedRows === 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     async getList(params) {
         let logs = await this.app.mysql.select('user_test_log', {
             where: {
@@ -115,9 +170,11 @@ class LogService extends Service {
             return false;
         }
         let submits = [];
-        const date = params.isSys
-        ? moment().startOf('days').add(-1, 'seconds').format('YYYY-MM-DD HH:mm:ss')
-        : moment().format('YYYY-MM-DD HH:mm:ss');
+        const mom = params.isSys
+        ? moment().startOf('days').add(-1, 'seconds')
+        : moment();
+        const date = mom.format('YYYY-MM-DD HH:mm:ss');
+        const changetime = mom.format('YYYY-MM-DD');
         for(let i = 0; i < arr.length; i++) {
             let func;
             let opeates = [];
@@ -131,6 +188,7 @@ class LogService extends Service {
                         remark: params.remark,
                         type: params.type,
                         checkTime: date,
+                        changetime,
                         taskId: params.taskId
                     });
                     break;
@@ -140,6 +198,7 @@ class LogService extends Service {
                         remark: '未打卡，自动休假',
                         type: 'autoHoliday',
                         checkTime: date,
+                        changetime,
                         taskId: params.taskId
                     });
                     break;
@@ -149,6 +208,7 @@ class LogService extends Service {
                         remark: params.remark,
                         type: params.type,
                         checkTime: date,
+                        changetime,
                         taskId: params.taskId
                     });
                     break;
@@ -158,6 +218,7 @@ class LogService extends Service {
                         remark: '成功',
                         type: 'done',
                         checkTime: date,
+                        changetime,
                         taskId: params.taskId
                     });
                     break;
@@ -167,6 +228,7 @@ class LogService extends Service {
                         remark: params.remark || '失败',
                         type: 'fail',
                         checkTime: date,
+                        changetime,
                         taskId: params.taskId
                     });
                     break;
@@ -210,6 +272,7 @@ class LogService extends Service {
                     remark: '成功',
                     type: 'done',
                     checkTime: date,
+                    changetime,
                     taskId: params.taskId
                 })
             } else {
