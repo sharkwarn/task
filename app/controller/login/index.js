@@ -61,16 +61,7 @@ class LoginController extends Controller {
         return;
     }
     if (person && +person.msgcode === +msgcode) {
-        let token = jwt.sign({
-            user,
-            userid: person.id,
-            status: 1,// 0代表该账号正在注册，1: 注册完成， 2: 销号
-            name: person.name,
-            iat: Date.now(),
-            exp: Date.now() + 60 * 60 * 24 * 30 * 1000
-        }, 'sara_todo_xiaowu');
-        this.ctx.set('token', token);
-        const res = await this.app.mysql.update('user_test', {
+        await this.app.mysql.update('user_test', {
             status: 1,
             password
         }, {

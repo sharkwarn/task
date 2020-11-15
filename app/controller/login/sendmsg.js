@@ -47,6 +47,7 @@ class LoginController extends Controller {
     const params = {
         name: 'sara',
         user: user,
+        status: 0,
         msgcode: msgCode,
         msgcodetime: moment().format('YYYY-MM-DD HH:MM:ss')
     };
