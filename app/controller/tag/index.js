@@ -3,8 +3,6 @@ const Controller = require('egg').Controller;
 
 class TagController extends Controller {
   async index() {
-    const jwtParams = this.ctx.jwtParams;
-    const params = this.ctx.request.body;
     this.ctx.body = {
         success: true,
         errmsg: '',
@@ -37,7 +35,7 @@ class TagController extends Controller {
     }
     const res =  await this.ctx.service.tag.create({
         ...params,
-        phone: jwtParams.phone
+        userid: jwtParams.userid
     });
     if (res === true) {
         this.ctx.body = {
@@ -55,7 +53,7 @@ class TagController extends Controller {
   async getList() {
     const jwtParams = this.ctx.jwtParams;
     const res = await this.ctx.service.tag.getList({
-        phone: jwtParams.phone
+        userid: jwtParams.userid
     });
     this.ctx.body = {
         success: true,
@@ -67,7 +65,7 @@ class TagController extends Controller {
     const jwtParams = this.ctx.jwtParams;
     const params = this.ctx.request.body;
     const res = await this.ctx.service.tag.delete({
-        phone: jwtParams.phone,
+        userid: jwtParams.userid,
         tagId: params.tagId
     });
     if (res) {
@@ -87,7 +85,7 @@ class TagController extends Controller {
     const params = this.ctx.request.body;
     const res = await this.ctx.service.tag.edit({
         ...params,
-        phone: jwtParams.phone
+        userid: jwtParams.userid
     });
     if (res) {
         this.ctx.body = {

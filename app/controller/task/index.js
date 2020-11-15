@@ -42,7 +42,7 @@ class TaskController extends Controller {
             tag: params.tag ? params.tag : 2,
             reward: params.reward,
             punishment: params.punishment,
-            phone: jwtParams.phone,
+            userid: jwtParams.userid,
             dayofftaken: 0,
             currentStatus: 'nosign',
             status: params.willStart ? 'willStart' : 'ongoing',
@@ -50,7 +50,6 @@ class TaskController extends Controller {
             taskCreated: moment().format('YYYY-MM-DD HH:mm:ss'),
             counter: +params.counter === 1 ? 1 : 0
         });
-        console.log(params);
         if (res === true) {
             this.ctx.body = {
                 success: true,
@@ -69,17 +68,17 @@ class TaskController extends Controller {
         const params = this.ctx.request.body;
         const [res, resTag, defaultTag] = await Promise.all([
             this.ctx.service.task.getList({
-                phone: jwtParams.phone,
+                userid: jwtParams.userid,
                 title: params.title,
                 tag: params.tag,
                 status: params.status,
                 currentStatus: params.currentStatus
             }),
             this.ctx.service.tag.getList({
-                phone: jwtParams.phone
+                userid: jwtParams.userid
             }),
             this.ctx.service.tag.getList({
-                phone: 1
+                userid: 1
             })
         ]);
         if (res && resTag) {
@@ -130,14 +129,14 @@ class TaskController extends Controller {
         const params = this.ctx.request.body;
         const [res, resTag, defaultTag] = await Promise.all([
             this.ctx.service.task.search({
-                phone: jwtParams.phone,
+                userid: jwtParams.userid,
                 title: params.title
             }),
             this.ctx.service.tag.getList({
-                phone: jwtParams.phone
+                userid: jwtParams.userid
             }),
             this.ctx.service.tag.getList({
-                phone: 1
+                userid: 1
             })
         ]);
         if (res && resTag) {
@@ -177,7 +176,7 @@ class TaskController extends Controller {
         const params = this.ctx.request.body;
         const res = await this.ctx.service.task.delete({
             taskId: params.taskId,
-            phone: jwtParams.phone,
+            userid: jwtParams.userid,
         });
         if (res) {
             this.ctx.body = {
@@ -208,7 +207,7 @@ class TaskController extends Controller {
             reward: params.reward,
             punishment: params.punishment,
             tag: params.tag,
-            phone: jwtParams.phone,
+            userid: jwtParams.userid,
             lastUpdate: moment().format('YYYY-MM-DD HH:mm:ss'),
             counter: params.counter
         });
@@ -231,7 +230,7 @@ class TaskController extends Controller {
         const [detail, logs] = await Promise.all([
             this.ctx.service.task.detail({
                 taskId: params.taskId,
-                phone: jwtParams.phone,
+                userid: jwtParams.userid,
             }),
             this.ctx.service.log.getList({
                 taskId: params.taskId
@@ -300,7 +299,7 @@ class TaskController extends Controller {
             return;
         }
         const detail = await this.ctx.service.task.detail({
-            phone: jwtParams.phone,
+            userid: jwtParams.userid,
             taskId: params.taskId
         });
         const res = await this.ctx.service.task.restart({
@@ -313,7 +312,7 @@ class TaskController extends Controller {
             tag: params.tag ? params.tag : 2,
             reward: params.reward,
             punishment: params.punishment,
-            phone: jwtParams.phone,
+            userid: jwtParams.userid,
             dayofftaken: 0,
             currentStatus: 'nosign',
             status: params.willStart ? 'willStart' : 'ongoing',
@@ -369,7 +368,7 @@ class TaskController extends Controller {
             return;
         }
         const res = await this.ctx.service.task.editReward({
-            phone: jwtParams.phone,
+            userid: jwtParams.userid,
             rewardstatus: params.rewardstatus,
             taskId: params.taskId
         });
@@ -391,7 +390,7 @@ class TaskController extends Controller {
         const jwtParams = this.ctx.jwtParams;
         const params = this.ctx.request.body;
         const res = await this.ctx.service.task.getRewardList({
-            phone: jwtParams.phone,
+            userid: jwtParams.userid,
             tagId: params.tagId
         });
         this.ctx.body = {

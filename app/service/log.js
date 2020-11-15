@@ -49,7 +49,7 @@ class LogService extends Service {
         }
         if (flag) {
             const res = await this.ctx.service.task.edit({
-                phone: jwtParams.phone,
+                userid: jwtParams.userid,
                 taskId: params.taskId,
                 count: params.count,
                 countTime: day.format('YYYY-MM-DD')
@@ -92,7 +92,7 @@ class LogService extends Service {
     async validateCreate(params, jwtParams) {
         const findDetail = await this.ctx.service.task.detail({
             taskId: params.taskId,
-            phone: jwtParams.phone
+            userid: jwtParams.userid
         });
         if (!findDetail) {
             this.ctx.body = {
@@ -235,7 +235,7 @@ class LogService extends Service {
                 case 'taskDone':
                     func = this.ctx.service.task.edit;
                     opeates.push({
-                        phone: jwtParams.phone,
+                        userid: jwtParams.userid,
                         taskId: params.taskId,
                         currentStatus: 'done',
                         status: 'success',
@@ -246,7 +246,7 @@ class LogService extends Service {
                 case 'taskFail':
                     func = this.ctx.service.task.edit;
                     opeates.push({
-                        phone: jwtParams.phone,
+                        userid: jwtParams.userid,
                         taskId: params.taskId,
                         currentStatus: 'done',
                         status: 'fail',
@@ -256,7 +256,7 @@ class LogService extends Service {
                 case 'changeCurrentStatus':
                     func = this.ctx.service.task.edit;
                     opeates.push({
-                        phone: jwtParams.phone,
+                        userid: jwtParams.userid,
                         currentStatus: 'done',
                         taskId: params.taskId,
                         lastUpdate: date,

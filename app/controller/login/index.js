@@ -3,13 +3,15 @@ const jwt = require('jsonwebtoken');
 const Controller = require('egg').Controller;
 class LoginController extends Controller {
   async index() {
-
-    const {phone, msgcode, password} = this.ctx.request.body;
-    const user = await this.app.mysql.get('user_test', {phone});
-    if (user && (+user.msgcode === +msgcode || user.password === password)) {
+    const {user, msgcode, password} = this.ctx.request.body;
+    const person = await this.app.mysql.get('user_test', {
+        user
+    });
+    if (person && (+person.msgcode === +msgcode || person.password === password)) {
         let token = jwt.sign({
-            phone,
-            name: user.name,
+            user,
+            userid: person.id,
+            name: person.name,
             iat: Date.now(),
             exp: Date.now() + 60 * 60 * 24 * 3 * 1000
         }, 'sara_todo_xiaowu');
@@ -18,16 +20,23 @@ class LoginController extends Controller {
             success: true,
             errmsg: '',
             data: {
-                phone,
-                name: user.name
+                user,
+                name: person.name
             }
         };
-    } else if (user && msgcode && +user.msgcode !== +msgcode) {
+        await this.app.mysql.update('user_test', {
+            status: 1
+        }, {
+            where: {
+                user
+            }
+        });
+    } else if (person && msgcode && +person.msgcode !== +msgcode) {
         this.ctx.body = {
             success: false,
             errmsg: '验证码错误'
         };
-    } else if (user && password && user.password !== password) {
+    } else if (person && password && person.password !== password) {
         this.ctx.body = {
             success: false,
             errmsg: '账号或密码错误'
@@ -42,34 +51,42 @@ class LoginController extends Controller {
   }
 
   async signIn() {
-    const token = this.ctx.header.token;
-    const params = jwt.decode(token, 'sara_todo_xiaowu');
-    const {phone, password, msgcode} = this.ctx.request.body;
-    const user = await this.app.mysql.get('user_test', {phone});
-    if (user && +user.msgcode === +msgcode) {
+    const {user, password, msgcode} = this.ctx.request.body;
+    const person = await this.app.mysql.get('user_test', {user});
+    if (person && +person.status === 1) {
+        this.ctx.body = {
+            success: false,
+            errmsg: '该账号已经注册'
+        };
+        return;
+    }
+    if (person && +person.msgcode === +msgcode) {
         let token = jwt.sign({
-            phone,
-            name: user.name,
+            user,
+            userid: person.id,
+            status: 1,// 0代表该账号正在注册，1: 注册完成， 2: 销号
+            name: person.name,
             iat: Date.now(),
             exp: Date.now() + 60 * 60 * 24 * 30 * 1000
         }, 'sara_todo_xiaowu');
         this.ctx.set('token', token);
         const res = await this.app.mysql.update('user_test', {
+            status: 1,
             password
         }, {
             where: {
-                phone
+                user
             }
         });
         this.ctx.body = {
             success: true,
             errmsg: '',
             data: {
-                phone,
-                name: user.name
+                user,
+                name: person.name
             }
         };
-    } else if (user && +user.msgcode !== +msgcode) {
+    } else if (person && +person.msgcode !== +msgcode) {
         this.ctx.body = {
             success: false,
             errmsg: '验证码错误'
@@ -85,7 +102,6 @@ class LoginController extends Controller {
   async validate() {
     const token = this.ctx.header.token;
     const params = jwt.decode(token, 'sara_todo_xiaowu');
-    const {phone} = this.ctx.request.body;
     if (params && +params.exp >= Date.now()) {
         this.ctx.body = {
             success: true

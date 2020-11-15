@@ -2,6 +2,7 @@ module.exports = app => {
     const { router, controller } = app;
     router.get('/', controller.home.index);
     router.post('/login', controller.login.index.index);
+    router.post('/signin', controller.login.index.signIn);
     router.post('/validate', controller.login.index.validate);
     router.post('/login/sendmsg', controller.login.sendmsg.index);
     router.post('/logintest', controller.login.index.testLogin);

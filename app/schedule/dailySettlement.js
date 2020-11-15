@@ -14,7 +14,7 @@ module.exports = {
                 isSys: true,
                 remark: '系统自动休假'
             }, {
-                phone: item.phone
+                userid: item.userid
             });
         });
         const finalResult = await Promise.all(a);

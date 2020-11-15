@@ -4,13 +4,22 @@ const mail = require('../../utils/mail');
 
 class LoginController extends Controller {
   async index() {
-    const {phone} = this.ctx.request.body;
-    let user = await this.app.mysql.get('user_test', {phone});
+    const {user, type} = this.ctx.request.body;
+    let person = await this.app.mysql.get('user_test', {user});
+    if (type === 'register' && person && person.status == 1) {
+        this.ctx.body = {
+            success: false,
+            errmsg: '该账号已经注册'
+        };
+        return;
+    }
     const random = Math.random();
     let msgCode = Math.floor((random < 0.1 ? 0.1 + random : random) * 1000000);
     let flag = false;
-    if (this.ctx.helper.isEmail(phone)) {
-        const mailRes = await mail('568469228@qq.com', msgCode);
+    let userType;
+    if (this.ctx.helper.isEmail(user)) {
+        userType = 'mail';
+        const mailRes = await mail(user, msgCode);
         if (!mailRes) {
             this.ctx.body = {
                 success: false,
@@ -22,7 +31,8 @@ class LoginController extends Controller {
         flag = true;
     }
 
-    if (this.ctx.helper.isMobile(phone)) {
+    if (this.ctx.helper.isMobile(user)) {
+        userType = 'phone'
         msgCode = 123456;
         flag = true;
     }
@@ -36,19 +46,20 @@ class LoginController extends Controller {
     }
     const params = {
         name: 'sara',
+        user: user,
         msgcode: msgCode,
         msgcodetime: moment().format('YYYY-MM-DD HH:MM:ss')
     };
     let res;
-    if (!user) {
+    if (!person) {
         res = await this.app.mysql.insert('user_test', {
             ...params,
-            phone
+            phone: userType === 'phone' ? user : ''
         });
     } else {
         res = await this.app.mysql.update('user_test', params, {
             where: {
-                phone
+                user
             }
         });
     }

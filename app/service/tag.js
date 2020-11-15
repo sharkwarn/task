@@ -8,14 +8,14 @@ class TagService extends Service {
             color: params.color,
             tagCreated: moment().format('YYYY-MM-DD HH:mm:ss'),
             tagStatus: 'create',
-            phone: params.phone
+            userid: params.userid
         });
         return true;
     }
     async getList(params) {
         let tags = await this.app.mysql.select('user_test_tag', {
             where: {
-                phone: params.phone
+                userid: params.userid
             },
             orders: [
                 ['tagCreated', 'desc']
@@ -35,7 +35,7 @@ class TagService extends Service {
     }
     async delete(params) {
         const list = await this.ctx.service.task.getList({
-            phone: params.phone,
+            userid: params.userid,
             tag: params.tagId
         });
         const lastUpdate = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -43,7 +43,7 @@ class TagService extends Service {
             return this.ctx.service.task.edit({
                 taskId: item.taskId,
                 lastUpdate,
-                phone: params.phone,
+                userid: params.userid,
                 status: 'delete'
             });
         })
@@ -51,7 +51,7 @@ class TagService extends Service {
         // 失败情况下怎么处理。
         let flag = batchRes.find(item => item === false);
         const res = await this.app.mysql.delete('user_test_tag', {
-            phone: params.phone,
+            userid: params.userid,
             tagId: params.tagId
         });
 
@@ -69,7 +69,7 @@ class TagService extends Service {
         }, {
             where: {
                 tagId: params.tagId,
-                phone: params.phone
+                userid: params.userid
             }
         });
         if (res.affectedRows === 1) {

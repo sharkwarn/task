@@ -49,7 +49,7 @@ class TaskService extends Service {
     }
     async getList(params) {
         const whereParams = {
-            phone: params.phone,
+            userid: params.userid,
         };
         if (params.tag) {
             whereParams.tag = params.tag;
@@ -91,7 +91,7 @@ class TaskService extends Service {
     }
     async search(params) {
         let tasks = await this.app.mysql.query(
-            `select * from user_test_task where phone=?  and title like ?`, [params.phone, `%${params.title}%`]);
+            `select * from user_test_task where userid=?  and title like ?`, [params.userid, `%${params.title}%`]);
         return Object.assign([], tasks).map(item=>{
             const taskCreated = moment(item.taskCreated);
             const [currentDay, completedDay] = formatCurrentDay(item)
@@ -103,7 +103,7 @@ class TaskService extends Service {
     }
     async delete(params) {
         const res = await this.app.mysql.delete('user_test_task', {
-            phone: params.phone,
+            userid: params.userid,
             taskId: params.taskId
         });
         if (res && res.affectedRows === 1) {
@@ -114,7 +114,7 @@ class TaskService extends Service {
     }
     async edit(params) {
         let obj = {
-            phone: params.phone,
+            userid: params.userid,
         };
         if (params.lastUpdate) {
             obj.lastUpdate = params.lastUpdate
@@ -168,7 +168,7 @@ class TaskService extends Service {
         let res = await this.app.mysql.update('user_test_task', obj, {
             where: {
                 taskId: params.taskId,
-                phone: params.phone
+                userid: params.userid
             }
         });
         if (res.affectedRows === 1) {
@@ -200,10 +200,9 @@ class TaskService extends Service {
 
     async detail(params) {
         let res = await this.app.mysql.get('user_test_task', {
-            phone: params.phone,
+            userid: params.userid,
             taskId: params.taskId
         });
-        console.log(111111);
         if (res) {
             const taskCreated = moment(res.taskCreated);
             const [currentDay, completedDay] = formatCurrentDay(res)
@@ -222,7 +221,7 @@ class TaskService extends Service {
         let res = await this.app.mysql.update('user_test_task', params, {
             where: {
                 taskId: params.taskId,
-                phone: params.phone
+                userid: params.userid
             }
         });
         if (!res.affectedRows === 1) {
@@ -242,51 +241,6 @@ class TaskService extends Service {
         }
     }
 
-    // async a(task) {
-    //     const res = await this.ctx.service.log.getList({
-    //         taskId: task.taskId
-    //     });
-    //     const obj = {
-    //         ...task,
-    //         log: res
-    //     };
-    //     const detail = this.ctx.service.task.computeddays(obj);
-    //     const result = this.ctx.service.task.setHaveSignDays(detail.taskId, detail.haveSignDays);
-    //     return result;
-    // }
-
-    // computeddays(task) {
-    //     const log = Object.assign([], task.log);
-    //     const arr = log.filter(item => item.type === 'autoHoliday' || item.type === 'holiday' || item.type === 'sign');
-    //     task.haveSignDays = arr.length;
-    //     return task;
-    // }
-
-    // async setHaveSignDays(taskId, day) {
-    //     let res = await this.app.mysql.update('user_test_task', {
-    //         haveSignDays: day
-    //     }, {
-    //         where: {
-    //             taskId: taskId
-    //         }
-    //     });
-    //     if (res.affectedRows === 1) {
-    //         return true;
-    //     } else {
-    //         console.log('失败了。', taskId);
-    //         return false;
-    //     }
-    // }
-
-    // async computeHaveSignDays() {
-    //     const tasks = await this.app.mysql.query('SELECT * FROM `user_test_task`');
-    //     const arr = tasks.map(item => {
-    //         return this.ctx.service.task.a(item);
-    //     });
-    //     const res = await Promise.all(arr);
-    //     return res;
-    // }
-
     async editReward(params) {
         let obj = {
             rewardTime: moment().format('YYYY-MM-DD'),
@@ -295,7 +249,7 @@ class TaskService extends Service {
         let res = await this.app.mysql.update('user_test_task', obj, {
             where: {
                 taskId: params.taskId,
-                phone: params.phone
+                userid: params.userid
             }
         });
         if (res.affectedRows === 1) {
@@ -329,7 +283,7 @@ class TaskService extends Service {
             rewardstatus,
             rewardTime
             from user_test_task
-            where phone = ?
+            where userid = ?
             and (reward != '' or punishment !='')
             and status in ('ongoing') or lastUpdate like ?
         ) a
@@ -339,7 +293,7 @@ class TaskService extends Service {
             ${params.tagId ? 'where tagId = ?' : ''}
         ) b
         on a.tag = b.tagId   
-        `, [params.phone, `&${day}%`, params.tagId]);
+        `, [params.userid, `&${day}%`, params.tagId]);
         return Object.assign([], res).map(item => {
             if (item.rewardTime) {
                 const rewardTime = moment(item.rewardTime)
