@@ -55,7 +55,7 @@ class LoginController extends Controller {
     if (!person) {
         res = await this.app.mysql.insert('user_test', {
             ...params,
-            phone: userType === 'phone' ? user : ''
+            phone: userType === 'phone' ? user : undefined
         });
     } else {
         res = await this.app.mysql.update('user_test', params, {
