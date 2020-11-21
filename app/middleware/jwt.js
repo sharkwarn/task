@@ -27,11 +27,13 @@ module.exports = () => {
                 } else if (params && +params.exp < Date.now()) {
                     ctx.body = {
                         success: false,
+                        code: 2,
                         errmsg: '登录过期'
                     };
                 } else {
                     ctx.body = {
                         success: false,
+                        code: 1,
                         errmsg: '未登录'
                     };
                 }

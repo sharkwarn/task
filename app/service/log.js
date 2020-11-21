@@ -36,7 +36,8 @@ class LogService extends Service {
                 taskId: +params.taskId,
                 checkTime: day.format('YYYY-MM-DD HH:mm:ss'),
                 changetime: day.format('YYYY-MM-DD'),
-                count: params.count
+                count: params.count,
+                userid: jwtParams.userid
             };
             flag = await this.ctx.service.log.create(obj);
         } else if (res && res.length === 1) {
@@ -112,7 +113,7 @@ class LogService extends Service {
             haveSignDays
         } = findDetail;
         const taskCreated = moment(findDetail.taskCreated).startOf('day');
-        const currentDate = moment().startOf('day');
+        const currentDate = params.isSys ? moment().startOf('days').add(-1, 'seconds') : moment().startOf('day');
 
         let errmsg = verifyCurrentSign(currentStatus);
         if (errmsg) {
@@ -189,7 +190,8 @@ class LogService extends Service {
                         type: params.type,
                         checkTime: date,
                         changetime,
-                        taskId: params.taskId
+                        taskId: params.taskId,
+                        userid: jwtParams.userid
                     });
                     break;
                 case 'autoHoliday':
@@ -199,7 +201,8 @@ class LogService extends Service {
                         type: 'autoHoliday',
                         checkTime: date,
                         changetime,
-                        taskId: params.taskId
+                        taskId: params.taskId,
+                        userid: jwtParams.userid
                     });
                     break;
                 case 'sign':
@@ -209,7 +212,8 @@ class LogService extends Service {
                         type: params.type,
                         checkTime: date,
                         changetime,
-                        taskId: params.taskId
+                        taskId: params.taskId,
+                        userid: jwtParams.userid
                     });
                     break;
                 case 'done':
@@ -219,7 +223,8 @@ class LogService extends Service {
                         type: 'done',
                         checkTime: date,
                         changetime,
-                        taskId: params.taskId
+                        taskId: params.taskId,
+                        userid: jwtParams.userid
                     });
                     break;
                 case 'fail':
@@ -229,7 +234,8 @@ class LogService extends Service {
                         type: 'fail',
                         checkTime: date,
                         changetime,
-                        taskId: params.taskId
+                        taskId: params.taskId,
+                        userid: jwtParams.userid
                     });
                     break;
                 case 'taskDone':
@@ -273,7 +279,8 @@ class LogService extends Service {
                     type: 'done',
                     checkTime: date,
                     changetime,
-                    taskId: params.taskId
+                    taskId: params.taskId,
+                    userid: jwtParams.userid
                 })
             } else {
                 opeates = opeates[0];

@@ -100,7 +100,8 @@ class LoginController extends Controller {
     } else if (params && +params.exp < Date.now()) {
         this.ctx.body = {
             success: false,
-            errmsg: '登录过期'
+            errmsg: '登录过期',
+            code: 2
         };
     } else {
         this.ctx.body = {

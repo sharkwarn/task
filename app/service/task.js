@@ -37,7 +37,8 @@ class TaskService extends Service {
                 type: 'create',
                 checkTime: moment().format('YYYY-MM-DD HH:mm:ss'),
                 changetime: moment().format('YYYY-MM-DD'),
-                taskId: taskId
+                taskId: taskId,
+                userid: params.userid
             });
             if (resLog) {
                 return true;
@@ -232,7 +233,8 @@ class TaskService extends Service {
             type: 'restart',
             checkTime: moment().format('YYYY-MM-DD HH:mm'),
             changetime: moment().format('YYYY-MM-DD'),
-            taskId: params.taskId
+            taskId: params.taskId,
+            userid: params.userid
         });
         if (insertLog) {
             return true;
